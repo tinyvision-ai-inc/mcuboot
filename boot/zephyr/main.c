@@ -199,6 +199,8 @@ static void boot_serial_enter()
 }
 #endif
 
+int app_usb_init(void);
+
 int main(void)
 {
     struct boot_rsp rsp;
@@ -230,6 +232,8 @@ int main(void)
     (void)rc;
 
     mcuboot_status_change(MCUBOOT_STATUS_STARTUP);
+
+    app_usb_init();
 
 #if defined(CONFIG_MCUBOOT_UUID_VID) || defined(CONFIG_MCUBOOT_UUID_CID)
     FIH_CALL(boot_uuid_init, fih_rc);
@@ -336,7 +340,7 @@ int main(void)
         timeout_in_ms = 1;
     }
     boot_serial_check_start(&boot_funcs,timeout_in_ms);
-
+    BOOT_LOG_DBG("boot_serial_check done from %ums to %ums", start, k_uptime_get_32());
 #ifdef CONFIG_MCUBOOT_INDICATION_LED
     io_led_set(0);
 #endif
